@@ -9,13 +9,14 @@
 int duration;
 int distance;
 
-const int RPM = 60;
+const int RPM = 30;
 const int stepsPerRevolution = 64;  // change this to fit the number of steps per revolution for your motor
 
 // initialize the stepper library on pins 8 through 11:
 Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
-int t = 0.0;
+double t = 0.0;
+double dt = 0.0;
 double alfa = 0.0;
 
 void setup() {
@@ -33,8 +34,12 @@ void setup() {
 
 void loop() {
   // Clear the trigPin by setting it LOW:
-  int dt = millis() - t;
+  dt = millis() - t;
   t = millis();
+   Serial.println();
+   Serial.println(dt);
+   Serial.println(t);
+Serial.println();
 
   int distances[3] = {0};
   for(int i = 0; i < 3; i++) {
@@ -52,16 +57,15 @@ void loop() {
     distances[i] = distance;
   }
 
-  double dalfa = 2.0 * PI / (RPM * 1000.0) * dt;
+  double dalfa = 2.0*(1.0/dt);
   alfa += dalfa;
   if(alfa >= 2.0 * PI){
     alfa -= 2.0 * PI;
   }
-  for(int i = 0; i < 3; i++) {
-    Serial.println(distances[i]);
-  }
-  Serial.println(180.0 * alfa / PI);
+//  for(int i = 0; i < 3; i++) {
+//    Serial.println(distances[i]);
+//  }
+//  Serial.println(180.0 * alfa / PI);
   
   myStepper.step(-stepsPerRevolution);
-  delay(500);
 }
